@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 27, 2017 at 08:16 PM
+-- Generation Time: Jun 28, 2017 at 12:45 PM
 -- Server version: 10.1.16-MariaDB
 -- PHP Version: 5.6.24
 
@@ -238,6 +238,15 @@ CREATE TABLE `productcatalogue` (
   `catalogue_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `productcatalogue`
+--
+
+INSERT INTO `productcatalogue` (`catalogue_name`, `catalogue_id`) VALUES
+('UHT', 1),
+('SKM', 2),
+('SB', 3);
+
 -- --------------------------------------------------------
 
 --
@@ -310,6 +319,29 @@ CREATE TABLE `sku` (
   `catalogue_id` int(11) DEFAULT NULL,
   `sku_name` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `sku`
+--
+
+INSERT INTO `sku` (`sku_id`, `catalogue_id`, `sku_name`) VALUES
+(7777710, 1, 'Frisian Flag Disney Susu UHT Choco Tpk'),
+(7777711, 1, 'Frisian Flag Disney Susu UHT'),
+(7777712, 1, 'Frisian Flag Family Susu UHT Cokelat'),
+(7777713, 1, 'Frisian Flag Family Susu UHT Full'),
+(7777714, 1, 'Frisian Flag Family Susu UHT Low Fat Tpk'),
+(7777715, 2, 'Frisian Flag Susu Kental Manis Putih 40 gram'),
+(7777716, 2, 'Frisian Flag Susu Kental Manis Cokelat Kaleng'),
+(7777717, 2, 'Frisian Flag Susu Kental Manis Putih Kaleng'),
+(7777718, 2, 'Frisian Flag Susu Kental Manis Gold Kaleng'),
+(7777719, 2, 'Frisian Flag Susu Kental Manis Gold 220 gram'),
+(7777720, 3, 'Frisian Flag Mama Hamil 200 gram Box'),
+(7777721, 3, 'Frisian Flag Bubuk Instant'),
+(7777722, 3, 'Frisian Flag Energo Cokelat 400 gram Box'),
+(7777723, 3, 'Frisian Flag Karya 456 Madu 400 gram Box'),
+(7777724, 3, 'Frisian Flag Bendera Bubuk Full Cream'),
+(7777725, 3, 'Frisian Flag Jelajah 123 400 gram'),
+(7777725, 3, 'Frisian Flag Jelajah 123 400 gram');
 
 -- --------------------------------------------------------
 
