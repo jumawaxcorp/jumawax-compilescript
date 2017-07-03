@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 28, 2017 at 12:45 PM
+-- Generation Time: Jul 03, 2017 at 06:37 AM
 -- Server version: 10.1.16-MariaDB
 -- PHP Version: 5.6.24
 
@@ -230,6 +230,60 @@ INSERT INTO `journeyplanbystore` (`pjp_id`, `store_code`, `end_dat`, `notes`) VA
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `oos`
+--
+
+CREATE TABLE `oos` (
+  `store_code` varchar(255) NOT NULL,
+  `pjp_id` int(11) NOT NULL,
+  `oos_event_total` int(11) DEFAULT NULL,
+  `collect_dtm` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `oospromo`
+--
+
+CREATE TABLE `oospromo` (
+  `store_code` varchar(255) NOT NULL,
+  `pjp_id` int(11) NOT NULL,
+  `oos_promo_event_total` int(11) DEFAULT NULL,
+  `collect_dtm` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `oospromostoreunit`
+--
+
+CREATE TABLE `oospromostoreunit` (
+  `pjp_id` int(11) DEFAULT NULL,
+  `store_code` varchar(255) DEFAULT NULL,
+  `sku_id` int(11) DEFAULT NULL,
+  `oos_event_promo_total` int(11) DEFAULT NULL,
+  `collect_dtm` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `oosstoreunit`
+--
+
+CREATE TABLE `oosstoreunit` (
+  `pjp_id` int(11) NOT NULL,
+  `store_code` varchar(255) NOT NULL,
+  `sku_id` int(11) DEFAULT NULL,
+  `oos_event` int(11) DEFAULT NULL,
+  `collectdtm` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `productcatalogue`
 --
 
@@ -262,6 +316,18 @@ CREATE TABLE `pvpjpstore` (
 ,`address` varchar(255)
 ,`latitude` double
 ,`longitude` double
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `pvskustore`
+--
+CREATE TABLE `pvskustore` (
+`store_id` varchar(255)
+,`sku_id` int(11)
+,`catalogue_id` int(11)
+,`sku_name` varchar(50)
 );
 
 -- --------------------------------------------------------
@@ -342,6 +408,18 @@ INSERT INTO `sku` (`sku_id`, `catalogue_id`, `sku_name`) VALUES
 (7777724, 3, 'Frisian Flag Bendera Bubuk Full Cream'),
 (7777725, 3, 'Frisian Flag Jelajah 123 400 gram'),
 (7777725, 3, 'Frisian Flag Jelajah 123 400 gram');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `skubystore`
+--
+
+CREATE TABLE `skubystore` (
+  `store_id` varchar(255) DEFAULT NULL,
+  `catalogue_id` int(11) DEFAULT NULL,
+  `sku_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -461,6 +539,15 @@ INSERT INTO `zone` (`zone_id`, `zone_name`, `unused_field`, `unused_field2`) VAL
 DROP TABLE IF EXISTS `pvpjpstore`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`priangga`@`localhost` SQL SECURITY DEFINER VIEW `pvpjpstore`  AS  select `pjps`.`pjp_id` AS `id`,`pjps`.`store_code` AS `storecode`,`c`.`store_name` AS `storename`,`c`.`contact_name` AS `name`,`c`.`phone_num` AS `phonenumber`,`c`.`email` AS `email`,`addr`.`address_1` AS `address`,`addr`.`latitude` AS `latitude`,`addr`.`longitude` AS `longitude` from (((`journeyplanbystore` `pjps` join `store` `str`) join `address` `addr`) join `contact` `c`) where ((`pjps`.`store_code` = `str`.`store_code`) and (`str`.`account_num` = `c`.`account_num`) and (`str`.`contact_seq` = `c`.`contact_seq`) and (`str`.`account_num` = `addr`.`account_num`) and (`str`.`address_seq` = `addr`.`address_seq`)) ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `pvskustore`
+--
+DROP TABLE IF EXISTS `pvskustore`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`priangga`@`localhost` SQL SECURITY DEFINER VIEW `pvskustore`  AS  select `a`.`store_id` AS `store_id`,`a`.`sku_id` AS `sku_id`,`a`.`catalogue_id` AS `catalogue_id`,`b`.`sku_name` AS `sku_name` from ((`skubystore` `a` left join `sku` `b` on(((`a`.`sku_id` = `b`.`sku_id`) and (`a`.`catalogue_id` = `b`.`catalogue_id`)))) left join `store` `c` on((`a`.`store_id` = `c`.`store_code`))) ;
 
 --
 -- Indexes for dumped tables
