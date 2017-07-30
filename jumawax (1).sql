@@ -1,13 +1,15 @@
 -- phpMyAdmin SQL Dump
--- version 4.5.1
--- http://www.phpmyadmin.net
+-- version 4.7.0
+-- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 03, 2017 at 06:37 AM
--- Server version: 10.1.16-MariaDB
--- PHP Version: 5.6.24
+-- Generation Time: 30 Jul 2017 pada 16.28
+-- Versi Server: 10.1.24-MariaDB
+-- PHP Version: 7.1.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -22,13 +24,26 @@ SET time_zone = "+00:00";
 
 DELIMITER $$
 --
--- Functions
+-- Fungsi
 --
 CREATE DEFINER=`priangga`@`localhost` FUNCTION `createuser` (`agent` VARCHAR(255), `username` VARCHAR(255), `password` VARCHAR(255), `role` VARCHAR(255)) RETURNS VARCHAR(255) CHARSET latin1 BEGIN
 DECLARE roleid int;
 SELECT u.role_id into roleid FROM role u WHERE u.role = role;
 INSERT INTO user VALUES(username,password,agent,roleid);
 RETURN 'User succesfully created';
+END$$
+
+CREATE DEFINER=`priangga`@`localhost` FUNCTION `dovisit` (`pjpid` INT(11), `storecode` VARCHAR(255), `skuid` INT(11), `oos_promo` INT(11), `oos` INT(11), `collect_dtm` TIMESTAMP, `partial_oos` INT(11)) RETURNS VARCHAR(255) CHARSET latin1 BEGIN
+DECLARE countsku INT(11);
+	INSERT INTO oosstoreunit values(pjpid,storecode,sku_id,oos,collect_dtm,partial_oos);
+  INSERT INTO oospromostoreunit values(pjpid,storecode,sku_id,oos_promo,collect_dtm);
+  UPDATE skubyplan set status = 'COMPLETED' WHERE pjp_id = pjpid AND store_id = storecode AND sku_id = skuid;
+  SELECT COUNT(*) INTO countsku FROM skubyplan WHERE pjp_id = pjpid AND sku_id = skuid AND store_id = storecode AND status != 'COMPLETED';
+  /*IF countsku < 1
+  THEN UPDATE journeyplanbystore SET end_dat = collect_dtm WHERE pjp_id = pjpid AND store_code = storecode;
+  END IF;
+  /*UPDATE journeyplanbystore SET end_dat = collect_dtm WHERE pjp_id = pjpid AND store_code = storecode;*/
+	RETURN 'SUCCESS';
 END$$
 
 CREATE DEFINER=`priangga`@`localhost` FUNCTION `generatejourneyplan` (`useragent` VARCHAR(255), `pjpowner` VARCHAR(255)) RETURNS INT(11) BEGIN
@@ -56,7 +71,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `account`
+-- Struktur dari tabel `account`
 --
 
 CREATE TABLE `account` (
@@ -67,7 +82,7 @@ CREATE TABLE `account` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `account`
+-- Dumping data untuk tabel `account`
 --
 
 INSERT INTO `account` (`account_num`, `account_name`, `pic_name`, `unsused_field`) VALUES
@@ -78,7 +93,7 @@ INSERT INTO `account` (`account_num`, `account_name`, `pic_name`, `unsused_field
 -- --------------------------------------------------------
 
 --
--- Table structure for table `address`
+-- Struktur dari tabel `address`
 --
 
 CREATE TABLE `address` (
@@ -92,29 +107,29 @@ CREATE TABLE `address` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `address`
+-- Dumping data untuk tabel `address`
 --
 
 INSERT INTO `address` (`address_seq`, `account_num`, `address_1`, `address_2`, `zip_code`, `latitude`, `longitude`) VALUES
-(1, '0000121', 'Jalan Raya VIla Nusa Indah 1 No. 3', '', 16969, -6.2610147, 107.0581644),
-(2, '0000121', 'Jalan Raya Tambun Tiada Ujung 984 No. 999', '', 16969, -6.2610147, 107.0581644),
-(3, '0000121', 'Jalan Raya Cileungsi Arah Metland No. 2', '', 16969, -6.2610147, 107.0581644),
-(4, '0000121', 'Jalan Raya Pekayon No. 12', '', 16969, -6.2610147, 107.0581644),
-(5, '0000121', 'Jalan Jatiwarna warni No. 1', '', 16969, -6.2610147, 107.0581644),
-(6, '0000121', 'Jalan Bebek Bulak Kapal No. 1', '', 16969, -6.2610147, 107.0581644),
-(7, '0000121', 'Jalan Raya Kelapa Dua No. 1', '', 16969, -6.2610147, 107.0581644),
-(1, '0000122', 'Jalan Sabang No. 1', '', 16969, 19.2610147, -20.0581644),
-(2, '0000122', 'Jalan Perum Galaxy No. 1', '', 16969, -6.2610147, 107.0581644),
-(3, '0000122', 'Jalan Raya Cikeas No. 1', '', 16969, -6.2610147, 107.0581644),
-(4, '0000122', 'Jalan Rawa Lumbu No. 1', '', 16969, -6.2610147, 107.0581644),
-(5, '0000122', 'Jalan Raya Cimuning No. 1', '', 16969, -6.2610147, 107.0581644),
-(6, '0000122', 'Jalan Raya Saharjo Kav 2', '', 16969, -6.2610147, 107.0581644),
-(1, '0000123', 'Jalan MT Haryono', '', 16969, -6.2610147, 107.0581644);
+(1, '0000121', 'Jalan Raya VIla Nusa Indah 1 No. 3', '', 16969, 34.052235, -118.243683),
+(2, '0000121', 'Jalan Raya Tambun Tiada Ujung 984 No. 999', '', 16969, 34.052235, -118.243683),
+(3, '0000121', 'Jalan Raya Cileungsi Arah Metland No. 2', '', 16969, 34.052235, -118.243683),
+(4, '0000121', 'Jalan Raya Pekayon No. 12', '', 16969, 34.052235, -118.243683),
+(5, '0000121', 'Jalan Jatiwarna warni No. 1', '', 16969, 34.052235, -118.243683),
+(6, '0000121', 'Jalan Bebek Bulak Kapal No. 1', '', 16969, 34.052235, -118.243683),
+(7, '0000121', 'Jalan Raya Kelapa Dua No. 1', '', 16969, 34.052235, -118.243683),
+(1, '0000122', 'Jalan Sabang No. 1', '', 16969, 34.052235, -118.243683),
+(2, '0000122', 'Jalan Perum Galaxy No. 1', '', 16969, 34.052235, -118.243683),
+(3, '0000122', 'Jalan Raya Cikeas No. 1', '', 16969, 34.052235, -118.243683),
+(4, '0000122', 'Jalan Rawa Lumbu No. 1', '', 16969, 34.052235, -118.243683),
+(5, '0000122', 'Jalan Raya Cimuning No. 1', '', 16969, 34.052235, -118.243683),
+(6, '0000122', 'Jalan Raya Saharjo Kav 2', '', 16969, 34.052235, -118.243683),
+(1, '0000123', 'Jalan MT Haryono', '', 16969, 34.052235, -118.243683);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `contact`
+-- Struktur dari tabel `contact`
 --
 
 CREATE TABLE `contact` (
@@ -127,7 +142,7 @@ CREATE TABLE `contact` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `contact`
+-- Dumping data untuk tabel `contact`
 --
 
 INSERT INTO `contact` (`contact_seq`, `account_num`, `store_name`, `contact_name`, `phone_num`, `email`) VALUES
@@ -150,7 +165,7 @@ INSERT INTO `contact` (`contact_seq`, `account_num`, `store_name`, `contact_name
 -- --------------------------------------------------------
 
 --
--- Table structure for table `gorup`
+-- Struktur dari tabel `gorup`
 --
 
 CREATE TABLE `gorup` (
@@ -161,7 +176,7 @@ CREATE TABLE `gorup` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `gorup`
+-- Dumping data untuk tabel `gorup`
 --
 
 INSERT INTO `gorup` (`group_id`, `account_num`, `group_name`, `unused_field`) VALUES
@@ -178,7 +193,7 @@ INSERT INTO `gorup` (`group_id`, `account_num`, `group_name`, `unused_field`) VA
 -- --------------------------------------------------------
 
 --
--- Table structure for table `journeyplan`
+-- Struktur dari tabel `journeyplan`
 --
 
 CREATE TABLE `journeyplan` (
@@ -190,7 +205,7 @@ CREATE TABLE `journeyplan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `journeyplan`
+-- Dumping data untuk tabel `journeyplan`
 --
 
 INSERT INTO `journeyplan` (`pjp_id`, `submit_date`, `user_agent`, `pjp_owner`, `status`) VALUES
@@ -201,21 +216,21 @@ INSERT INTO `journeyplan` (`pjp_id`, `submit_date`, `user_agent`, `pjp_owner`, `
 -- --------------------------------------------------------
 
 --
--- Table structure for table `journeyplanbystore`
+-- Struktur dari tabel `journeyplanbystore`
 --
 
 CREATE TABLE `journeyplanbystore` (
   `pjp_id` int(11) NOT NULL,
   `store_code` varchar(255) NOT NULL,
-  `end_dat` date DEFAULT NULL,
-  `notes` varchar(255) DEFAULT NULL
+  `notes` varchar(255) DEFAULT NULL,
+  `end_dat` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `journeyplanbystore`
+-- Dumping data untuk tabel `journeyplanbystore`
 --
 
-INSERT INTO `journeyplanbystore` (`pjp_id`, `store_code`, `end_dat`, `notes`) VALUES
+INSERT INTO `journeyplanbystore` (`pjp_id`, `store_code`, `notes`, `end_dat`) VALUES
 (125001, 'ALE14114', NULL, NULL),
 (125001, 'ALE14115', NULL, NULL),
 (125001, 'ALF1411', NULL, NULL),
@@ -230,7 +245,7 @@ INSERT INTO `journeyplanbystore` (`pjp_id`, `store_code`, `end_dat`, `notes`) VA
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oos`
+-- Struktur dari tabel `oos`
 --
 
 CREATE TABLE `oos` (
@@ -243,7 +258,7 @@ CREATE TABLE `oos` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oospromo`
+-- Struktur dari tabel `oospromo`
 --
 
 CREATE TABLE `oospromo` (
@@ -256,7 +271,7 @@ CREATE TABLE `oospromo` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oospromostoreunit`
+-- Struktur dari tabel `oospromostoreunit`
 --
 
 CREATE TABLE `oospromostoreunit` (
@@ -267,10 +282,40 @@ CREATE TABLE `oospromostoreunit` (
   `collect_dtm` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data untuk tabel `oospromostoreunit`
+--
+
+INSERT INTO `oospromostoreunit` (`pjp_id`, `store_code`, `sku_id`, `oos_event_promo_total`, `collect_dtm`) VALUES
+(125001, 'ALF1411', NULL, 1, '2017-01-29 20:30:34'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 20:31:55'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 20:55:35'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 20:57:31'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:01:12'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:02:47'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:04:58'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:05:24'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:17:41'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:18:13'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:37:32'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:38:17'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:38:58'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:40:06'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:41:40'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:42:34'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:45:26'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:46:10'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:46:49'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:47:28'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:47:57'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:49:12'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:52:13'),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:53:43');
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `oosstoreunit`
+-- Struktur dari tabel `oosstoreunit`
 --
 
 CREATE TABLE `oosstoreunit` (
@@ -278,13 +323,44 @@ CREATE TABLE `oosstoreunit` (
   `store_code` varchar(255) NOT NULL,
   `sku_id` int(11) DEFAULT NULL,
   `oos_event` int(11) DEFAULT NULL,
-  `collectdtm` int(11) DEFAULT NULL
+  `collectdtm` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `partial_oos_event` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data untuk tabel `oosstoreunit`
+--
+
+INSERT INTO `oosstoreunit` (`pjp_id`, `store_code`, `sku_id`, `oos_event`, `collectdtm`, `partial_oos_event`) VALUES
+(125001, 'ALF1411', NULL, 1, '2017-01-29 20:30:34', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 20:31:55', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 20:55:35', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 20:57:31', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:01:12', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:02:47', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:04:58', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:05:24', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:17:41', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:18:13', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:37:32', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:38:17', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:38:58', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:40:06', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:41:40', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:42:34', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:45:26', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:46:10', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:46:49', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:47:28', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:47:57', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:49:12', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:52:13', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-29 21:53:43', 1);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `productcatalogue`
+-- Struktur dari tabel `productcatalogue`
 --
 
 CREATE TABLE `productcatalogue` (
@@ -293,7 +369,7 @@ CREATE TABLE `productcatalogue` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `productcatalogue`
+-- Dumping data untuk tabel `productcatalogue`
 --
 
 INSERT INTO `productcatalogue` (`catalogue_name`, `catalogue_id`) VALUES
@@ -305,6 +381,7 @@ INSERT INTO `productcatalogue` (`catalogue_name`, `catalogue_id`) VALUES
 
 --
 -- Stand-in structure for view `pvpjpstore`
+-- (Lihat di bawah untuk tampilan aktual)
 --
 CREATE TABLE `pvpjpstore` (
 `id` int(11)
@@ -322,18 +399,20 @@ CREATE TABLE `pvpjpstore` (
 
 --
 -- Stand-in structure for view `pvskustore`
+-- (Lihat di bawah untuk tampilan aktual)
 --
 CREATE TABLE `pvskustore` (
 `store_id` varchar(255)
 ,`sku_id` int(11)
 ,`catalogue_id` int(11)
 ,`sku_name` varchar(50)
+,`pjp_id` int(11)
 );
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `region`
+-- Struktur dari tabel `region`
 --
 
 CREATE TABLE `region` (
@@ -344,7 +423,7 @@ CREATE TABLE `region` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `region`
+-- Dumping data untuk tabel `region`
 --
 
 INSERT INTO `region` (`region_id`, `zone_id`, `region`, `unused_field`) VALUES
@@ -356,7 +435,7 @@ INSERT INTO `region` (`region_id`, `zone_id`, `region`, `unused_field`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `role`
+-- Struktur dari tabel `role`
 --
 
 CREATE TABLE `role` (
@@ -367,7 +446,7 @@ CREATE TABLE `role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `role`
+-- Dumping data untuk tabel `role`
 --
 
 INSERT INTO `role` (`role_id`, `role`, `role_description`, `unused_field`) VALUES
@@ -377,7 +456,7 @@ INSERT INTO `role` (`role_id`, `role`, `role_description`, `unused_field`) VALUE
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sku`
+-- Struktur dari tabel `sku`
 --
 
 CREATE TABLE `sku` (
@@ -387,7 +466,7 @@ CREATE TABLE `sku` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `sku`
+-- Dumping data untuk tabel `sku`
 --
 
 INSERT INTO `sku` (`sku_id`, `catalogue_id`, `sku_name`) VALUES
@@ -412,7 +491,45 @@ INSERT INTO `sku` (`sku_id`, `catalogue_id`, `sku_name`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `skubystore`
+-- Struktur dari tabel `skubyplan`
+--
+
+CREATE TABLE `skubyplan` (
+  `pjp_id` int(11) DEFAULT NULL,
+  `sku_id` int(11) DEFAULT NULL,
+  `status` varchar(20) DEFAULT NULL,
+  `store_id` varchar(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data untuk tabel `skubyplan`
+--
+
+INSERT INTO `skubyplan` (`pjp_id`, `sku_id`, `status`, `store_id`) VALUES
+(125001, 7777712, 'COMPLETED', 'ALF1411'),
+(125001, 7777713, '', 'ALF1411'),
+(125001, 7777714, '', 'ALF1411'),
+(125001, 7777715, '', 'ALF1411'),
+(125001, 7777716, '', 'ALF1411'),
+(125001, 7777717, '', 'ALF1411'),
+(125001, 7777720, '', 'ALF1411'),
+(125001, 7777721, '', 'ALF1411'),
+(125001, 7777722, '', 'ALF1411'),
+(125002, 7777711, '', 'ALF1411'),
+(125002, 7777710, '', 'ALF1411'),
+(125002, 7777711, '', 'ALF14112'),
+(125002, 7777712, '', 'ALF14112'),
+(125002, 7777716, '', 'ALF14112'),
+(125002, 7777717, '', 'ALF14112'),
+(125002, 7777718, '', 'ALF14112'),
+(125002, 7777725, '', 'ALF14112'),
+(125002, 7777724, '', 'ALF14112'),
+(125002, 7777723, '', 'ALF14112');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `skubystore`
 --
 
 CREATE TABLE `skubystore` (
@@ -421,10 +538,36 @@ CREATE TABLE `skubystore` (
   `sku_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data untuk tabel `skubystore`
+--
+
+INSERT INTO `skubystore` (`store_id`, `catalogue_id`, `sku_id`) VALUES
+('ALF1411', 1, 7777710),
+('ALF1411', 1, 7777711),
+('ALF1411', 1, 7777712),
+('ALF1411', 1, 7777713),
+('ALF1411', 1, 7777714),
+('ALF1411', 2, 7777715),
+('ALF1411', 2, 7777716),
+('ALF1411', 2, 7777717),
+('ALF1411', 3, 7777720),
+('ALF1411', 3, 7777721),
+('ALF1411', 3, 7777722),
+('ALF14112', 1, 7777710),
+('ALF14112', 1, 7777711),
+('ALF14112', 1, 7777712),
+('ALF14112', 2, 7777716),
+('ALF14112', 2, 7777717),
+('ALF14112', 2, 7777718),
+('ALF14112', 3, 7777725),
+('ALF14112', 3, 7777724),
+('ALF14112', 3, 7777723);
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `store`
+-- Struktur dari tabel `store`
 --
 
 CREATE TABLE `store` (
@@ -437,7 +580,7 @@ CREATE TABLE `store` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `store`
+-- Dumping data untuk tabel `store`
 --
 
 INSERT INTO `store` (`store_code`, `account_num`, `group_id`, `contact_seq`, `address_seq`, `region_id`) VALUES
@@ -459,7 +602,7 @@ INSERT INTO `store` (`store_code`, `account_num`, `group_id`, `contact_seq`, `ad
 -- --------------------------------------------------------
 
 --
--- Table structure for table `teritory`
+-- Struktur dari tabel `teritory`
 --
 
 CREATE TABLE `teritory` (
@@ -469,7 +612,7 @@ CREATE TABLE `teritory` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `teritory`
+-- Dumping data untuk tabel `teritory`
 --
 
 INSERT INTO `teritory` (`id`, `teritory`, `parent_id`) VALUES
@@ -490,7 +633,7 @@ INSERT INTO `teritory` (`id`, `teritory`, `parent_id`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user`
+-- Struktur dari tabel `user`
 --
 
 CREATE TABLE `user` (
@@ -501,7 +644,7 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `user`
+-- Dumping data untuk tabel `user`
 --
 
 INSERT INTO `user` (`username`, `password`, `agent_name`, `role_id`) VALUES
@@ -512,7 +655,7 @@ INSERT INTO `user` (`username`, `password`, `agent_name`, `role_id`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `zone`
+-- Struktur dari tabel `zone`
 --
 
 CREATE TABLE `zone` (
@@ -523,7 +666,7 @@ CREATE TABLE `zone` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `zone`
+-- Dumping data untuk tabel `zone`
 --
 
 INSERT INTO `zone` (`zone_id`, `zone_name`, `unused_field`, `unused_field2`) VALUES
@@ -534,20 +677,20 @@ INSERT INTO `zone` (`zone_id`, `zone_name`, `unused_field`, `unused_field2`) VAL
 -- --------------------------------------------------------
 
 --
--- Structure for view `pvpjpstore`
+-- Struktur untuk view `pvpjpstore`
 --
 DROP TABLE IF EXISTS `pvpjpstore`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`priangga`@`localhost` SQL SECURITY DEFINER VIEW `pvpjpstore`  AS  select `pjps`.`pjp_id` AS `id`,`pjps`.`store_code` AS `storecode`,`c`.`store_name` AS `storename`,`c`.`contact_name` AS `name`,`c`.`phone_num` AS `phonenumber`,`c`.`email` AS `email`,`addr`.`address_1` AS `address`,`addr`.`latitude` AS `latitude`,`addr`.`longitude` AS `longitude` from (((`journeyplanbystore` `pjps` join `store` `str`) join `address` `addr`) join `contact` `c`) where ((`pjps`.`store_code` = `str`.`store_code`) and (`str`.`account_num` = `c`.`account_num`) and (`str`.`contact_seq` = `c`.`contact_seq`) and (`str`.`account_num` = `addr`.`account_num`) and (`str`.`address_seq` = `addr`.`address_seq`)) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`priangga`@`localhost` SQL SECURITY DEFINER VIEW `pvpjpstore`  AS  select `pjps`.`pjp_id` AS `id`,`pjps`.`store_code` AS `storecode`,`c`.`store_name` AS `storename`,`c`.`contact_name` AS `name`,`c`.`phone_num` AS `phonenumber`,`c`.`email` AS `email`,`addr`.`address_1` AS `address`,`addr`.`latitude` AS `latitude`,`addr`.`longitude` AS `longitude` from (((`journeyplanbystore` `pjps` join `store` `str`) join `address` `addr`) join `contact` `c`) where ((`pjps`.`store_code` = `str`.`store_code`) and (`str`.`account_num` = `c`.`account_num`) and (`str`.`contact_seq` = `c`.`contact_seq`) and (`str`.`account_num` = `addr`.`account_num`) and (`str`.`address_seq` = `addr`.`address_seq`) and isnull(`pjps`.`end_dat`)) ;
 
 -- --------------------------------------------------------
 
 --
--- Structure for view `pvskustore`
+-- Struktur untuk view `pvskustore`
 --
 DROP TABLE IF EXISTS `pvskustore`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`priangga`@`localhost` SQL SECURITY DEFINER VIEW `pvskustore`  AS  select `a`.`store_id` AS `store_id`,`a`.`sku_id` AS `sku_id`,`a`.`catalogue_id` AS `catalogue_id`,`b`.`sku_name` AS `sku_name` from ((`skubystore` `a` left join `sku` `b` on(((`a`.`sku_id` = `b`.`sku_id`) and (`a`.`catalogue_id` = `b`.`catalogue_id`)))) left join `store` `c` on((`a`.`store_id` = `c`.`store_code`))) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`priangga`@`localhost` SQL SECURITY DEFINER VIEW `pvskustore`  AS  select `a`.`store_id` AS `store_id`,`a`.`sku_id` AS `sku_id`,`a`.`catalogue_id` AS `catalogue_id`,`b`.`sku_name` AS `sku_name`,`d`.`pjp_id` AS `pjp_id` from (((`skubystore` `a` left join `sku` `b` on(((`a`.`sku_id` = `b`.`sku_id`) and (`a`.`catalogue_id` = `b`.`catalogue_id`)))) left join `store` `c` on((`a`.`store_id` = `c`.`store_code`))) left join `skubyplan` `d` on(((`a`.`sku_id` = `d`.`sku_id`) and (`a`.`store_id` = `d`.`store_id`) and (`d`.`status` <> 'COMPLETED')))) ;
 
 --
 -- Indexes for dumped tables
@@ -613,7 +756,8 @@ ALTER TABLE `region`
 -- AUTO_INCREMENT for table `zone`
 --
 ALTER TABLE `zone`
-  MODIFY `zone_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `zone_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
