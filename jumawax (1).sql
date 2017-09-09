@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 30 Jul 2017 pada 16.28
+-- Generation Time: 09 Sep 2017 pada 19.21
 -- Versi Server: 10.1.24-MariaDB
 -- PHP Version: 7.1.6
 
@@ -31,6 +31,15 @@ DECLARE roleid int;
 SELECT u.role_id into roleid FROM role u WHERE u.role = role;
 INSERT INTO user VALUES(username,password,agent,roleid);
 RETURN 'User succesfully created';
+END$$
+
+CREATE DEFINER=`priangga`@`localhost` FUNCTION `doupdatejourneystore` (`pjpid` INT(11), `storecode` VARCHAR(255), `skuid` INT(11), `oos_promo` INT(11), `oos` INT(11), `collect_dtm` TIMESTAMP, `partial_oos` INT(11)) RETURNS VARCHAR(255) CHARSET latin1 BEGIN
+DECLARE countsku INT(11);
+  SELECT COUNT(*) INTO countsku FROM skubyplan WHERE pjp_id = pjpid AND sku_id = skuid AND store_id = storecode AND status != 'COMPLETED';
+  IF countsku = 0
+  THEN UPDATE journeyplanbystore SET end_dat = collect_dtm WHERE pjp_id = pjpid AND store_code = storecode;
+  END IF;
+	RETURN 'SUCCESS';
 END$$
 
 CREATE DEFINER=`priangga`@`localhost` FUNCTION `dovisit` (`pjpid` INT(11), `storecode` VARCHAR(255), `skuid` INT(11), `oos_promo` INT(11), `oos` INT(11), `collect_dtm` TIMESTAMP, `partial_oos` INT(11)) RETURNS VARCHAR(255) CHARSET latin1 BEGIN
@@ -233,7 +242,7 @@ CREATE TABLE `journeyplanbystore` (
 INSERT INTO `journeyplanbystore` (`pjp_id`, `store_code`, `notes`, `end_dat`) VALUES
 (125001, 'ALE14114', NULL, NULL),
 (125001, 'ALE14115', NULL, NULL),
-(125001, 'ALF1411', NULL, NULL),
+(125001, 'ALF1411', NULL, '2017-01-06 05:19:00'),
 (125001, 'ALF14112', NULL, NULL),
 (125001, 'CRF16111', NULL, NULL),
 (125002, 'IDM15111', NULL, NULL),
@@ -279,7 +288,7 @@ CREATE TABLE `oospromostoreunit` (
   `store_code` varchar(255) DEFAULT NULL,
   `sku_id` int(11) DEFAULT NULL,
   `oos_event_promo_total` int(11) DEFAULT NULL,
-  `collect_dtm` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `collect_dtm` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -287,30 +296,31 @@ CREATE TABLE `oospromostoreunit` (
 --
 
 INSERT INTO `oospromostoreunit` (`pjp_id`, `store_code`, `sku_id`, `oos_event_promo_total`, `collect_dtm`) VALUES
-(125001, 'ALF1411', NULL, 1, '2017-01-29 20:30:34'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 20:31:55'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 20:55:35'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 20:57:31'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:01:12'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:02:47'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:04:58'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:05:24'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:17:41'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:18:13'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:37:32'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:38:17'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:38:58'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:40:06'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:41:40'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:42:34'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:45:26'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:46:10'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:46:49'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:47:28'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:47:57'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:49:12'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:52:13'),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:53:43');
+(125001, 'ALF1411', NULL, 1, '2017-01-30 03:30:34'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 03:31:55'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 03:55:35'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 03:57:31'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:01:12'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:02:47'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:04:58'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:05:24'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:17:41'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:18:13'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:37:32'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:38:17'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:38:58'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:40:06'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:41:40'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:42:34'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:45:26'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:46:10'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:46:49'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:47:28'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:47:57'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:49:12'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:52:13'),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:53:43'),
+(125001, 'ALF1411', NULL, 1, '2017-01-06 05:19:00');
 
 -- --------------------------------------------------------
 
@@ -323,7 +333,7 @@ CREATE TABLE `oosstoreunit` (
   `store_code` varchar(255) NOT NULL,
   `sku_id` int(11) DEFAULT NULL,
   `oos_event` int(11) DEFAULT NULL,
-  `collectdtm` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `collectdtm` datetime DEFAULT NULL,
   `partial_oos_event` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -332,30 +342,31 @@ CREATE TABLE `oosstoreunit` (
 --
 
 INSERT INTO `oosstoreunit` (`pjp_id`, `store_code`, `sku_id`, `oos_event`, `collectdtm`, `partial_oos_event`) VALUES
-(125001, 'ALF1411', NULL, 1, '2017-01-29 20:30:34', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 20:31:55', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 20:55:35', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 20:57:31', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:01:12', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:02:47', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:04:58', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:05:24', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:17:41', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:18:13', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:37:32', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:38:17', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:38:58', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:40:06', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:41:40', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:42:34', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:45:26', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:46:10', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:46:49', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:47:28', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:47:57', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:49:12', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:52:13', 1),
-(125001, 'ALF1411', NULL, 1, '2017-01-29 21:53:43', 1);
+(125001, 'ALF1411', NULL, 1, '2017-01-30 03:30:34', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 03:31:55', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 03:55:35', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 03:57:31', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:01:12', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:02:47', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:04:58', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:05:24', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:17:41', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:18:13', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:37:32', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:38:17', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:38:58', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:40:06', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:41:40', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:42:34', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:45:26', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:46:10', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:46:49', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:47:28', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:47:57', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:49:12', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:52:13', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-30 04:53:43', 1),
+(125001, 'ALF1411', NULL, 1, '2017-01-06 05:19:00', 1);
 
 -- --------------------------------------------------------
 
@@ -507,7 +518,7 @@ CREATE TABLE `skubyplan` (
 
 INSERT INTO `skubyplan` (`pjp_id`, `sku_id`, `status`, `store_id`) VALUES
 (125001, 7777712, 'COMPLETED', 'ALF1411'),
-(125001, 7777713, '', 'ALF1411'),
+(125001, 7777713, 'COMPLETED', 'ALF1411'),
 (125001, 7777714, '', 'ALF1411'),
 (125001, 7777715, '', 'ALF1411'),
 (125001, 7777716, '', 'ALF1411'),
